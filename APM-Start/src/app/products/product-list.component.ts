@@ -4,12 +4,24 @@ import { Component } from '@angular/core';
     selector: 'pm-products',
     templateUrl: './product-list.component.html',
 })
-export class ProductListComponent {
+export class ProductListComponent {    
     pageTitle = 'Product List';
     imageWidth = 50;
     imageMargin = 2;
     showImage = false;
-    listFilter = '';
+
+    _listFilter = '';
+
+    get listFilter(): string {
+      return this._listFilter;
+    }
+
+    set listFilter(value:string){
+      this._listFilter = value;
+      this.filteredProducts = this.listFilter ? this.performFilter(this.listFilter) : this.productsList;
+    }
+
+    filteredProducts: any[];
     productsList: any[] = [{
         productId: 2,
         productName: 'Garden Cart',
@@ -31,7 +43,16 @@ export class ProductListComponent {
         imageUrl: 'assets/images/hammer.png'
       }];
 
+    constructor() {
+      this.filteredProducts = this.productsList;
+    }
+
     toggleImage(): void {
         this.showImage = !this.showImage;
+    }
+
+    performFilter(filterBy: string) : any[]{
+      filterBy = filterBy.toLowerCase();
+      return this.productsList.filter((product: any) => product.productName.toLowerCase().indexOf(filterBy) !== -1);
     }
 }
