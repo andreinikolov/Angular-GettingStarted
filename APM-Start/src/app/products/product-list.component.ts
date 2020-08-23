@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import {IProduct } from './product'
+import {IProduct } from './product';
 
 @Component({
     selector: 'pm-products',
@@ -12,7 +12,19 @@ export class ProductListComponent
     imageWidth = 50;
     imageMargin = 2;
     showImage = false;
-    listFilter = '';
+
+    _listFilter = '';
+
+    get listFilter(): string {
+      return this._listFilter;
+    }
+
+    set listFilter(value: string){
+      this._listFilter = value;
+      this.filteredProducts = this.listFilter ? this.performFilter(this.listFilter) : this.productsList;
+    }
+
+    filteredProducts: any[];
     productsList: IProduct[] = [{
         productId: 2,
         productName: 'Garden Cart',
@@ -34,11 +46,20 @@ export class ProductListComponent
         imageUrl: 'assets/images/hammer.png'
       }];
 
+    constructor() {
+      this.filteredProducts = this.productsList;
+    }
+
     toggleImage(): void {
         this.showImage = !this.showImage;
     }
 
     ngOnInit(): void {
-      console.log('onInit on PLC')
+      console.log('onInit on PLC');
+    }
+
+    performFilter(filterBy: string): any[]{
+      filterBy = filterBy.toLowerCase();
+      return this.productsList.filter((product: any) => product.productName.toLowerCase().indexOf(filterBy) !== -1);
     }
 }
